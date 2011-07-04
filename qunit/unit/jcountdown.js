@@ -20,7 +20,7 @@ test("Basic", 2, function() {
 
 
 
-test("Advanced", 11, function() {
+test("Advanced", 13, function() {
 
 	$(document).ready(function(){
 
@@ -71,15 +71,19 @@ test("Advanced", 11, function() {
 			}
 		});
 		
-		//var events =  jQuery("#test2").data('events.jcountdown');
-		//alert( events.change[0] );
+		//Check settings were changed
+		var newSettings =  $("#test").countdown('getSettings');
+		equal( newSettings.date, "june 1, 2011", "Settings changed successfully" );
+
 		$("#test").countdown('destroy');
 		
-		var settings =  jQuery("#test").countdown('getSettings');		
+		var settings =  $("#test").countdown('getSettings');		
 		equals( settings, undefined, "Settings were removed" );
 		
-		var events =  jQuery("#test").data('events.jcountdown');
+		var events =  $("#test").data('events.jcountdown');
 		
 		equals( events, undefined, "Events were removed" );
+		
+		equals( $("#test").html(), "Original Content", "Original content is put back after instance has been destroyed" );
 	});	
 });
