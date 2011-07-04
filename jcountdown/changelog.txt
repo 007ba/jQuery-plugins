@@ -1,0 +1,27 @@
+Version 1.3:
+
+- Added new support for methods:
+	changeSettings
+	getSettings
+	resume
+	pause
+	complete
+	destroy
+
+- Added support for Timezones via hour offset
+
+- Added Count direction 
+	down
+	up
+
+Version 1.2:
+
+- Fixed bugs
+- Improved Login
+- Added Events:
+	onChange
+	onComplete
+
+Version 1:
+
+- First Version of Plugin
