@@ -2,13 +2,13 @@
 
 A collection of small plugins that work with jQuery 1.4.3+.
 
-Current Plugin:
+Current Plugins:
 
-- jQuery Countdown Timer Plugin
-
+	* jCountdown - jQuery Countdown Plugin [Project Page](http://www.webmuse.co.uk/category/project/jcountdown-jquery-countdown-plugin/)
+	* jCookie - jQuery Cookie Plugin [Project Page](http://www.webmuse.co.uk/category/project/jcookie-jquery-cookie-plugin/)
 
 ## License
 
-The cssHooks plugin is licensed under the MIT License (LICENSE.txt).
+Theses plugins are licensed under the MIT License (LICENSE.txt).
 
-Copyright (c) 2011 [Tom Ellis](http://www.webmuse.co.uk)
+Copyright (c) 2011 [Tom Ellis](http://www.webmuse.co.uk/)
