@@ -13,11 +13,11 @@
 ```javascript
 	$(document).ready(function(){
 		//Simple usage
-		$("#time").cookie("cookie_name", "cookie\_value");
+		$("#time").cookie("cookie_name", "cookie_value");
 		
 
 		//Advanced usage
-		$("#time").cookie("cookie_name", "cookie\_value");
+		$("#time").cookie("cookie_name", "cookie_value");
 		
 	});
 ```
