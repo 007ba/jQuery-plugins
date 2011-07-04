@@ -4,8 +4,8 @@ A collection of small plugins that work with jQuery 1.4.3+.
 
 Current Plugins:
 
-	- jCountdown - jQuery Countdown Plugin [Project Page](http://www.webmuse.co.uk/)
-	- jCookie - jQuery Cookie Plugin [Project Page](http://www.webmuse.co.uk/category/project/jcookie-jquery-cookie-plugin/)
+* jCountdown - jQuery Countdown Plugin [Project Page](http://www.webmuse.co.uk/category/project/jcountdown-jquery-countdown-plugin/)
+* jCookie - jQuery Cookie Plugin [Project Page](http://www.webmuse.co.uk/category/project/jcookie-jquery-cookie-plugin/)
 
 ## License
 
