@@ -4,12 +4,12 @@
 * Licensed under MIT License
 * See http://www.webmuse.co.uk/license/
 */
-(function($) {
+(function ($) {
 
-	$.fn.countdown = function( method, options ) {  
+	$.fn.countdown = function( method /*,options*/ ) {  
 	
 		var defaults = {
-				date: new Date(),
+				date: (new Date()),
 				updateTime: 1000,
 				htmlTemplate: "%{d} <span class=\"cd-time\">days</span> %{h} <span class=\"cd-time\">hours</span> %{m} <span class=\"cd-time\">mins</span> %{s} <span class=\"cd-time\">sec</span>",
 				minus: false,
@@ -25,17 +25,24 @@
 			floor = Math.floor,
 			msPerHour = 36E5,
 			msPerDay = 864E5,
-			opts = {},
 			rDate = /(%\{d\}|%\{h\}|%\{m\}|%\{s\})/g,
 			rDays = /%\{d\}/,
 			rHours = /%\{h\}/,
 			rMins = /%\{m\}/,
 			rSecs = /%\{s\}/,
-			complete = false,
-			template,
-			onChange,
-			onComplete,
-			onPause,
+			getTimezoneDate = function( offset ) {
+			
+				var hoursOffset = offset || 0,
+					currentHours = 0,
+					tempDate = new Date(),
+					dateMS;
+				
+				hoursOffset = hoursOffset * msPerHour;
+				currentHours = tempDate.getTime() - ( ( -tempDate.getTimezoneOffset() / 60 ) * msPerHour );
+				dateMS = tempDate.setTime( currentHours + hoursOffset );
+				
+				return (new Date( dateMS ));
+			},			
 			timerFunc = function() {
 
 				var $this = this,
@@ -59,11 +66,11 @@
 				
 				template = settings.htmlTemplate;
 				
-				todaysDate = ( settings.offset == null ) ? new Date() : getTimezoneDate( settings.offset );
+				todaysDate = ( settings.offset === null ) ? new Date() : getTimezoneDate( settings.offset );
 					
 				countdownDate = new Date( settings.date );
 				
-				timeLeft = ( settings.direction == 'down' ) ? countdownDate.getTime() - todaysDate.getTime() :
+				timeLeft = ( settings.direction === 'down' ) ? countdownDate.getTime() - todaysDate.getTime() :
 					todaysDate.getTime() - countdownDate.getTime();
 					
 				e_daysLeft = timeLeft / msPerDay;
@@ -95,70 +102,38 @@
 
 				if ( settings.direction === 'down' && ( todaysDate <= countdownDate || settings.minus ) ) {
 					time = template.replace( rDays, daysLeft ).replace( rHours, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
-				} else if ( opts.direction === 'up' && ( countdownDate <= todaysDate || opts.minus ) ) {
+				} else if ( settings.direction === 'up' && ( countdownDate <= todaysDate || settings.minus ) ) {
 					time = template.replace( rDays, daysLeft ).replace( rHours, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
 				} else {
 					time = template.replace( rDate, "00");
-					settings.complete = true;
+					settings.hasCompleted = true;
 				}
 								
 				$this.html( time );
 				
 				$this.trigger('change', [settings] );
 				
-				if ( settings.complete ){
+				if ( settings.hasCompleted ){
 
 					$this.trigger('complete.jcountdown');
-					clearInterval( settings.timer );
-				}       		
-			},
-			getTimezoneDate2 = function( offset ) {
-			
-				var daysOffset = offset.days || 0,
-					hoursOffset = offset.hours || 0,
-					minutesOffset = offset.minutes || 0,
-					secondsOffset = offset.seconds || 0,
-					utcString = (new Date()).toUTCString();
-												
-				hoursOffset = hoursOffset * msPerHour;
-				
-				var utc = new Date().toUTCString(),
-					tempDate = new Date( utc ); 
-
-				dateMS = tempDate.setTime( tempDate.getTime() + hoursOffset);
-				
-				var newDate = new Date( dateMS );
-				newDate.setMinutes( (new Date () ).getMinutes() + minutesOffset);
-				newDate.setSeconds( (new Date() ).getSeconds() + secondsOffset);
-				newDate.setMilliseconds( (new Date() ).getMilliseconds() );
-				
-				return newDate;
-			},
-			getTimezoneDate = function( offset ) {
-			
-				var hoursOffset = offset || 0,
-					currentHours = 0,
-					tempDate = new Date();
-				
-				hoursOffset = hoursOffset * msPerHour;
-				currentHours = tempDate.getTime() - ( ( -tempDate.getTimezoneOffset() / 60 ) * msPerHour );
-				dateMS = tempDate.setTime( currentHours + hoursOffset );
-				
-				return (new Date( dateMS ));
+					window.clearInterval( settings.timer );
+				}
 			},			
 			methods = {
 			
 				init: function( options ){
-					$.extend( opts, defaults, options );
+					
+					var opts = $.extend( {}, defaults, options ),
+						template;
 					
 					template = opts.htmlTemplate;
 					
 					return this.each(function() {
 						var $this = $(this),
 							settings = {},
-							todaysDate = ( opts.offset == null ) ? new Date() : getTimezoneDate( opts.offset ),
+							todaysDate = ( opts.offset === null ) ? new Date() : getTimezoneDate( opts.offset ),
 							countdownDate = new Date( opts.date ),
-							timeLeft = ( opts.direction == 'down' ) ? countdownDate.getTime() - todaysDate.getTime() :
+							timeLeft = ( opts.direction === 'down' ) ? countdownDate.getTime() - todaysDate.getTime() :
 								todaysDate.getTime() - countdownDate.getTime(),
 							e_daysLeft = timeLeft / msPerDay,
 							daysLeft = floor(e_daysLeft),
@@ -167,7 +142,8 @@
 							minsLeft = floor((e_hrsLeft - hrsLeft)*60),					
 							e_minsleft = (e_hrsLeft - hrsLeft)*60, //Gets remainder and * 60
 							secLeft = floor((e_minsleft - minsLeft)*60),
-							time = "";
+							time = "",
+							func;
 
 						if( opts.onChange ){
 							$this.bind("change.jcountdown", opts.onChange );
@@ -204,6 +180,8 @@
 							}
 						}
 			
+						settings.hasCompleted = false;
+						
 						//Set initial time
 						if ( opts.direction === 'down' && ( todaysDate <= countdownDate || opts.minus ) ) {
 							time = template.replace( rDays, daysLeft ).replace( rHours, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
@@ -211,7 +189,7 @@
 							time = template.replace( rDays, daysLeft ).replace( rHours, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
 						} else {
 							time = template.replace( rDate, "00");
-							complete = true;
+							settings.hasCompleted = true;
 						}
 
 						//Store settings so they can be accessed later
@@ -224,15 +202,14 @@
 						settings.template = opts.htmlTemplate;
 						settings.htmlTemplate = opts.htmlTemplate;
 						settings.minus = opts.minus;
-						settings.complete = complete;
 						settings.offset = opts.offset;
 						settings.onChange = opts.onChange;
 						settings.onComplete = opts.onComplete;
 						settings.onResume = opts.onResume;
 						settings.onPause = opts.onPause;
 						
-						if( !complete ) {
-							var func = $.proxy( timerFunc, $this );
+						if( !settings.hasCompleted ) {
+							func = $.proxy( timerFunc, $this );
 							settings.timer = window.setInterval( func, settings.updateTime );
 						}
 						
@@ -240,10 +217,10 @@
 						
 						$this.html( time );
 						
-						if ( settings.complete ) {
+						if ( settings.hasCompleted ) {
 						
 							$this.trigger('complete.jcountdown');
-							clearInterval( settings.timer );
+							window.clearInterval( settings.timer );
 						}
 						
 					});				
@@ -267,22 +244,20 @@
 							minsLeft,					
 							e_minsleft,
 							secLeft,
-							time = "";
+							time = "",
+							func;
+							
 						if( !$this.data('jcdSettings') ) {
 							return true;
 						}
 						
 						settings = $.extend( {}, $this.data('jcdSettings'), options );
-
-						if( !settings ){
-							return true;
-						}
 						
 						template = settings.htmlTemplate;
 
-						todaysDate = ( settings.offset == null ) ? new Date() : getTimezoneDate( settings.offset );
-						countdownDate = new Date( opts.date );						
-						timeLeft = ( settings.direction == 'down' ) ? countdownDate.getTime() - todaysDate.getTime() :
+						todaysDate = ( settings.offset === null ) ? new Date() : getTimezoneDate( settings.offset );
+						countdownDate = new Date( settings.date );						
+						timeLeft = ( settings.direction === 'down' ) ? countdownDate.getTime() - todaysDate.getTime() :
 							todaysDate.getTime() - countdownDate.getTime();
 						e_daysLeft = timeLeft / msPerDay;
 						daysLeft = floor( e_daysLeft );
@@ -294,7 +269,7 @@
 						
 						$this.unbind('.jcountdown');
 						
-						clearInterval( settings.timer );
+						window.clearInterval( settings.timer );
 						
 						if( settings.onChange ) {
 							$this.bind('change.jcountdown', settings.onChange);
@@ -314,28 +289,28 @@
 						
 						if ( settings.direction === 'down' && ( todaysDate <= countdownDate || settings.minus ) ) {
 							time = template.replace( rDays, daysLeft ).replace( rHours, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
-						} else if ( opts.direction === 'up' && ( countdownDate <= todaysDate || opts.minus ) ) {
+						} else if ( settings.direction === 'up' && ( countdownDate <= todaysDate || settings.minus ) ) {
 							time = template.replace( rDays, daysLeft ).replace( rHours, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
 						} else {
 							time = template.replace( rDate, "00");
-							settings.complete = true;
+							settings.hasCompleted = true;
 						}
 
-						var func = $.proxy( timerFunc, $this );
+						func = $.proxy( timerFunc, $this );
 
-						settings.timer =  window.setInterval(func, settings.updateTime);
+						settings.timer =  window.setInterval( func, settings.updateTime );
 						
 						$this.data('jcdSettings', settings);
 						
-						if ( settings.complete ) {
+						if ( settings.hasCompleted ) {
 							$this.trigger('complete.jcountdown');
-							clearInterval( settings.timer );
+							window.clearInterval( settings.timer );
 						}
 														
 					});				
 				
 				},
-				resume: function( options ) {
+				resume: function() {
 				
 					return this.each(function() {
 						var $this = $(this),
@@ -364,9 +339,9 @@
 						
 						template = settings.htmlTemplate;
 
-						todaysDate = ( settings.offset == null ) ? new Date() : getTimezoneDate( settings.offset );
-						countdownDate = new Date( opts.date );						
-						timeLeft = ( settings.direction == 'down' ) ? countdownDate.getTime() - todaysDate.getTime() :
+						todaysDate = ( settings.offset === null ) ? new Date() : getTimezoneDate( settings.offset );
+						countdownDate = new Date( settings.date );						
+						timeLeft = ( settings.direction === 'down' ) ? countdownDate.getTime() - todaysDate.getTime() :
 							todaysDate.getTime() - countdownDate.getTime();
 						e_daysLeft = timeLeft / msPerDay;
 						daysLeft = floor( e_daysLeft );
@@ -378,11 +353,11 @@
 
 						if ( settings.direction === 'down' && ( todaysDate <= countdownDate || settings.minus ) ) {
 							time = template.replace( rDays, daysLeft ).replace( rHours, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
-						} else if ( opts.direction === 'up' && ( countdownDate <= todaysDate || opts.minus ) ) {
+						} else if ( settings.direction === 'up' && ( countdownDate <= todaysDate || settings.minus ) ) {
 							time = template.replace( rDays, daysLeft ).replace( rHours, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
 						} else {
-							time = template.replace( rDate, "00");
-							settings.complete = true;
+							time = template.replace( rDate, "00" );
+							settings.hasCompleted = true;
 						}
 						
 						settings.timer =  window.setInterval( func, settings.updateTime );
@@ -393,14 +368,14 @@
 						
 						$this.html( time ).trigger('change.jcountdown');
 						
-						if ( settings.complete ) {
+						if ( settings.hasCompleted ) {
 						
 							$this.trigger('complete.jcountdown');
-							clearInterval( settings.timer );
+							window.clearInterval( settings.timer );
 						}	
 					});
 				},
-				pause: function( options ) {
+				pause: function() {
 				
 					return this.each(function() {
 						var $this = $(this),
@@ -411,10 +386,10 @@
 						}
 						
 						$this.trigger('pause.jcountdown');	
-						clearInterval( settings.timer );
+						window.clearInterval( settings.timer );
 					});
 				},
-				complete: function( options ) {
+				complete: function() {
 
 					return this.each(function() {
 						var $this = $(this),
@@ -424,10 +399,10 @@
 							return true;
 						}						
 						
-						clearInterval( settings.timer );
-						settings.complete = true;
+						window.clearInterval( settings.timer );
+						settings.hasCompleted = true;
 						
-						$this.data('jcdSettings', settings );						
+						$this.data('jcdSettings', settings);						
 						$this.trigger('complete.jcountdown');
 					});		
 				},
@@ -448,7 +423,7 @@
 						$this.removeData('jcdSettings');
 					});
 				},
-				getSettings: function( name, value ){
+				getSettings: function( name ){
 				
 					var settings,
 						$this = $(this[0]);
@@ -456,6 +431,14 @@
 					settings = $this.data( 'jcdSettings' );
 					
 					if( !settings ){
+						return undefined;
+					}
+					
+					if( name ) {
+						
+						if( settings[name] ) {
+							return settings[name];
+						}
 						return undefined;
 					}
 						
@@ -467,7 +450,7 @@
 
 			return methods[method].apply( this, slice.call( arguments, 1 ) );
 		
-		} else if( typeof method === 'object' || !method ) {
+		} else if( $.type( method ) === 'object' || !method ) {
 		
 			return methods.init.apply( this, arguments );
 		} else {
