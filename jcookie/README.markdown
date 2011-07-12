@@ -16,33 +16,37 @@
 
 ## Usage
 ```javascript
-	$(document).ready(function(){
-		//Simple usage
-		
-	    $.cookie("cookie_name", "cookie_value");
-		
-		//Or	
-	    $.cookie("cookie_name", "cookie_value",{
-	        path : "/" //Whole website
-	        domain : "example.com"
-	        expires : 2 //2 Days time
-	    });
-		
+$(document).ready(function(){
+	//Simple usage
+	
+    $.cookie("cookie_name", "cookie_value");
+	
+	//Or	
+    $.cookie("cookie_name", "cookie_value",{
+        path : "/" //Whole website
+        domain : "example.com"
+        expires : 2 //2 Days time
+    });
+	
 
-		//Advanced usage
+	//Advanced usage
 
-	    //Set global settings for all cookies
-	    $.cookie.settings = {
-	        path : "/",
-	        domain : "example.com",
-	        expires : 2
-	    };
+    //Set global settings for all cookies
+    $.cookie.settings = {
+        path : "/",
+        domain : "example.com",
+        expires : 2
+    };
 
-	    $.cookie("cookie_name", "cookie_value");
+    $.cookie("cookie_name", "cookie_value");
 
-	    $.cookie("cookie_name2", "cookie_value2");		
-		
-	});
+    $.cookie("cookie_name2", "cookie_value2");
+
+
+	//Passing null to the cookie plugin will delete it
+	$.cookie('cookie_name', null);		
+	
+});
 ```
 
 ## License
