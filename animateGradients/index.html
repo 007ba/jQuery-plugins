@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<title>Css3 Gradient Animations jQuery Plugin</title>
+<script src="script/jquery-1.6.2.js" type="text/javascript"></script>
+<script src="script/gradients.js" type="text/javascript"></script>
+<script src="script/jquery.color.js" type="text/javascript"></script>
+<script src="script/jquery.animateGradient.min.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<script type="text/javascript">
+$(document).ready(function() {
+	
+	$body = $("body");
+	
+	function animate() {
+		
+		$body.animateGradient('linear-gradient(purple, orange)', 1000);
+		$body.animateGradient('linear-gradient(green, pink)', 1000);
+		$body.animateGradient('linear-gradient(blue, green)', 1000);
+		
+		setTimeout(function(){
+			animate()
+		}, 1000);
+	}
+
+	function radialAnimate() {
+	
+		$body.animateGradient('radial-gradient(40% 50%, circle, purple, orange)', 1000);
+		$body.animateGradient('radial-gradient(40% 50%, circle, green, pink)', 1000);
+		$body.animateGradient('radial-gradient(40% 50%, circle, blue, green)', 1000);
+		
+		setTimeout(function(){
+			radialAnimate()
+		}, 1000);
+	}	
+	//animate();
+	
+	radialAnimate();
+	
+});
+</script>
+</head>
+<body>
+	<h1>Animated Gradients Baby!</h1>
+</body>
+</html>
