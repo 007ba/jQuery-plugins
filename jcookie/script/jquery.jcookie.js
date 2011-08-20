@@ -1,5 +1,5 @@
 /*! 
-* jCookie - jQuery Cookie Plugin v1.0
+* jCookie - jQuery Cookie Plugin v1.1
 * Copyright 2011 Tom Ellis http://www.webmuse.co.uk
 * Licensed under MIT License
 * See http://www.webmuse.co.uk/license/
@@ -73,6 +73,8 @@
 			secure = opts.secure ? '; secure' : '';
 			 
 			document.cookie = name + '=' + encodeURIComponent( value ) + expires + path + domain + secure;
+			
+			return document.cookie.indexOf(name);
 		}
 	};
 	
@@ -83,5 +85,11 @@
 		path: '',
 		secure: false
 	};
+		
+	$.support.cookies = $.cookie('j_testcookie', 'value');
+	
+	if( $.support.cookies ) {
+		$.cookie('j_testcookie', null); //delete test cookie
+	}
        
 })(jQuery);
