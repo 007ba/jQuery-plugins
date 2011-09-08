@@ -1,26 +1,40 @@
+
+Version 1.3.1:
+
+- Some logic improved, meaning shorter code
+- Removed unnecessary indenting
+- Added new option, hoursOnly (boolean). Numbers of days left gets converted to hours and added to the number of hours left in the countdown
+- Renamed function getTimeZoneDate to getTZDate
+- Data name renamed from jcdSettings to jcdData
+- Event namespace renamed from jcountdown to jcdevt
+- Fixed bug: When changing settings of an existing countdown, time left doesn't update until next interval, when it should be straight away
+- Fixed bug: When calling .countdown on an element that already has a countdown, another one gets added. Now it changes the settings.
+- Fixed bug: When retrieving a boolean setting that is false, returns undefined instead.
+- Fixed bug: Interval should be cleared when countdown destroyed.
+
 Version 1.3:
 
 - Added new support for methods:
-	changeSettings
-	getSettings
-	resume
-	pause
-	complete
-	destroy
+changeSettings
+getSettings
+resume
+pause
+complete
+destroy
 
 - Added support for Timezones via hour offset
 
-- Added Count direction 
-	down
-	up
+- Added Count direction
+down
+up
 
 Version 1.2:
 
 - Fixed bugs
 - Improved Login
 - Added Events:
-	onChange
-	onComplete
+onChange
+onComplete
 
 Version 1:
 
