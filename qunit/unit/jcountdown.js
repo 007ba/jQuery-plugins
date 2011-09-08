@@ -2,12 +2,12 @@ module("jCountdown Countdown Plugin");
 
 test("Basic", 2, function() {
 
-	$(document).ready(function(){
-
+	$(document).ready(function() {
+		stop();
 		$("#test").countdown({
 			date: "june 25, 2011",
-			onComplete: function( event ){
-			
+			onComplete: function( event ) {
+				start();
 				$(this).html("Completed");				
 				ok( true, "Completed Event Fired" );
 				equals( $("#test").html(), "Completed", "returns proper value" );
@@ -20,67 +20,71 @@ test("Basic", 2, function() {
 
 
 
-test("Advanced", 13, function() {
-
-	$(document).ready(function(){
+test("Advanced", 17, function() {
+	
+	var newSettings,
+		settings,
+		events;
+	$(document).ready(function() {
 
 		$("#test").countdown({
 			date: "june 25, 2011", //Counting TO a date
-			onChange: function( event, timer ){
+			onChange: function( event, timer ) {
 				
 				ok( true, "Change Event Fired" );
 			},
-			onComplete: function( event ){
+			onComplete: function( event ) {
 			
 				$(this).html("Completed");				
 				ok( true, "Completed Event Fired" );
 				equals( $("#test").html(), "Completed", "returns proper value" );
 			},
-			onPause: function( event ){
+			onPause: function( event ) {
 				ok( true, "Paused Event Fired" );
 			},
-			onResume: function( event ){
+			onResume: function( event ) {
 				ok( true, "Resumed Event Fired" );
 			},			
 			leadingZero: true
 		});
 		
 		
-		$("#test").countdown('pause');
-		$("#test").countdown('resume');
+		$("#test").countdown('pause').countdown('resume');
 		
 		
 		$("#test").countdown('changeSettings',{
 			date : 'june 1, 2011',
-			onChange: function( event, timer ){
+			onChange: function( event, timer ) {
 				
 				ok( true, "Change after change" );
 			},
-			onComplete: function( event ){
+			onComplete: function( event ) {
 			
 				$(this).html("Completed");
 				ok( true, "Completed Event Fired after change method ran" );
 				equals( $("#test").html(), "Completed", "returns proper value after change" );
 				
 			},
-			onPause: function( event ){
+			onPause: function( event ) {
 				ok( true, "Paused Event Fired after change method ran" );
 			},
-			onResume: function( event ){
+			onResume: function( event ) {
 				ok( true, "Resumed Event Fired after change method ran" );
 			}
 		});
 		
 		//Check settings were changed
-		var newSettings =  $("#test").countdown('getSettings');
+		newSettings =  $("#test").countdown('getSettings');
 		equal( newSettings.date, "june 1, 2011", "Settings changed successfully" );
-
+		
+		equal( $("#test").countdown('getSettings', 'minus'), false, "Getting settings data" );
+		
 		$("#test").countdown('destroy');
 		
-		var settings =  $("#test").countdown('getSettings');		
+		settings =  $("#test").countdown('getSettings');		
 		equals( settings, undefined, "Settings were removed" );
 		
-		var events =  $("#test").data('events.jcountdown');
+		events =  $("#test").data('events.jcdData');
 		
 		equals( events, undefined, "Events were removed" );
 		

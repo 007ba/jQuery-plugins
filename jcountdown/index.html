@@ -12,6 +12,9 @@ $(document).ready(function() {
 			
 	$("#time").countdown({
 		date: "january 1, 2011", //Counting FROM a date
+		onChange: function(){
+			//console.log('here');
+		},
 		onComplete: function( event ){
 		
 			$(this).html("Completed");
@@ -19,13 +22,14 @@ $(document).ready(function() {
 		leadingZero: true,
 		direction: "up"
 	});
-
+	
 	$("#time2").countdown({
-		date: "july 31, 2011",
+		date: "september 30, 2011",
 		offset: 1,
+		hoursOnly: true,
 		onComplete: function( event ){
 		
-			$(this).html("Completed");
+			//$(this).html("Completed");
 		},
 		onPause: function( event, timer ){
 
@@ -37,6 +41,7 @@ $(document).ready(function() {
 		},
 		leadingZero: true
 	});
+	
 	
 	//$("#time2").countdown('pause');
 	
