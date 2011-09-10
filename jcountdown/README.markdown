@@ -33,10 +33,12 @@
 
 	offset - Default: null
 	         int or float (Offset in hours, can be used for setting countdown time to match server time)
-
+		
 	direction - Default: "down"
 	            Countdown Direction, "down" for down to a date, and up for "up" from a date
 
+	hoursOnly - Default: false (New in 1.3.1)
+	            (Boolean. If set to true, jCountdown ignores days left and add converts to hours and adds this to the hours left)
 ## Methods
 
 	changeSettings - Accepts an object map, the same as when first initialising the plugin
