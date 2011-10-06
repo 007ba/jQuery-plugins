@@ -1,16 +1,15 @@
 /* 
-* jCountdown 1.3.1 jQuery Plugin
-* Copyright 2011 Tom Ellis http://www.webmuse.co.uk
-* MIT Licensed (license.txt)
+* jCountdown 1.3.2 jQuery Plugin
+* Copyright 2011 Tom Ellis http://www.webmuse.co.uk | MIT Licensed (license.txt)
 */
 (function($) {
 
-$.fn.countdown = function( method /*, options*/ ) {  
+$.fn.countdown = function( method /*, options*/ ) {
 
 	var defaults = {
 			date: new Date(),
 			updateTime: 1E3,
-			htmlTemplate: "%{d} <span class=\"cd-time\">days</span> %{h} <span class=\"cd-time\">hours</span> %{m} <span class=\"cd-time\">mins</span> %{s} <span class=\"cd-time\">sec</span>",
+			htmlTemplate: "%{d} <span class='cd-time'>days</span> %{h} <span class='cd-time'>hours</span> %{m} <span class='cd-time'>mins</span> %{s} <span class='cd-time'>sec</span>",
 			minus: false,
 			onChange: null,
 			onComplete: null,
@@ -18,10 +17,10 @@ $.fn.countdown = function( method /*, options*/ ) {
 			onPause: null,
 			leadingZero: false,
 			offset: null,
-			hoursOnly: false, //New in 1.3.1
+			hoursOnly: false,
 			direction: "down"
 		},
-		slice = [].slice,
+        slice = [].slice,
 		floor = Math.floor,
 		msPerHr = 36E5,
 		msPerDay = 864E5,
@@ -33,14 +32,11 @@ $.fn.countdown = function( method /*, options*/ ) {
 		getTZDate = function( offset ) {					
 			//Returns a new date based on an offset (set in options as "offset")
 			//Useful when you want to match a server time, not a local PC time
-			var hrs = offset || 0,
-				curHrs = 0,
+			var hrs = (offset || 0) * msPerHr,
 				tmpDate = new Date(),
-				dateMS;
-			
-			hrs *= msPerHr;
-			curHrs = tmpDate.getTime() - ( ( -tmpDate.getTimezoneOffset() / 60 ) * msPerHr );
-			dateMS = tmpDate.setTime( curHrs + hrs );
+				curHrs = tmpDate.getTime() - ( ( -tmpDate.getTimezoneOffset() / 60 ) * msPerHr ),
+				dateMS = tmpDate.setTime( curHrs + hrs );
+
 			tmpDate = null;
 			return new Date( dateMS );
 		},			
@@ -70,8 +66,7 @@ $.fn.countdown = function( method /*, options*/ ) {
 			now = ( settings.offset === null ) ? new Date() : getTZDate( settings.offset );
 			date = new Date( settings.date );
 			
-			timeLeft = ( settings.direction === "down" ) ? date.getTime() - now.getTime() :
-				now.getTime() - date.getTime();	
+			timeLeft = ( settings.direction === "down" ) ? date.getTime() - now.getTime() : now.getTime() - date.getTime();	
 			eDaysLeft = timeLeft / msPerDay;
 			daysLeft = floor( eDaysLeft );
 			eHrsLeft = ( eDaysLeft - daysLeft ) * 24;
@@ -84,6 +79,11 @@ $.fn.countdown = function( method /*, options*/ ) {
 				hrsLeft += daysLeft * 24;
 				daysLeft = 0;
 			}
+			
+			settings.daysLeft = daysLeft;
+			settings.hrsLeft = hrsLeft;
+			settings.minsLeft = minsLeft;
+			settings.secLeft = secLeft;
 			
 			if ( settings.leadingZero ) {			
 				if ( daysLeft < 10 && !settings.hoursOnly ) {
@@ -101,10 +101,7 @@ $.fn.countdown = function( method /*, options*/ ) {
 			}
 
 			if ( settings.direction === "down" && ( now <= date || settings.minus ) ) {
-				time = template.replace( rDays, daysLeft )
-							   .replace( rHrs, hrsLeft )
-							   .replace( rMins, minsLeft )
-							   .replace( rSecs, secLeft );
+				time = template.replace( rDays, daysLeft ).replace( rHrs, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
 			} else if ( settings.direction === "up" && ( date <= now || settings.minus ) ) {
 				time = template.replace( rDays, daysLeft ).replace( rHrs, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
 			} else {
@@ -123,31 +120,13 @@ $.fn.countdown = function( method /*, options*/ ) {
 			init: function( options ) {
 				
 				var opts = $.extend( {}, defaults, options ),
-					template;
-				
-				template = opts.htmlTemplate;
+					template = opts.htmlTemplate;
 				
 				return this.each(function() {
 					var $this = $(this),
 						settings = {},
-						now = ( opts.offset === null ) ? new Date() : getTZDate( opts.offset ),
-						date = new Date( opts.date ),
-						timeLeft = ( opts.direction === "down" ) ? date.getTime() - now.getTime() :
-							now.getTime() - date.getTime(),
-						eDaysLeft = timeLeft / msPerDay,
-						daysLeft = floor(eDaysLeft),
-						eHrsLeft = (eDaysLeft - daysLeft) * 24, //Gets remainder and * 24
-						hrsLeft = floor(eHrsLeft),
-						minsLeft = floor((eHrsLeft - hrsLeft)*60),					
-						eMinsleft = (eHrsLeft - hrsLeft)*60, //Gets remainder and * 60
-						secLeft = floor((eMinsleft - minsLeft)*60),
-						time = "",
 						func;
-						
-					if( opts.hoursOnly ) {
-						hrsLeft += daysLeft * 24;
-						daysLeft = 0;
-					}
+
 					//If this element already has a countdown timer, just change the settings
 					if( $this.data("jcdData") ) {
 						$this.countdown("changeSettings", options);
@@ -171,25 +150,6 @@ $.fn.countdown = function( method /*, options*/ ) {
 						$this.bind("resume.jcdevt", opts.onResume );
 					}
 					
-					if ( opts.leadingZero ) {
-					
-						if ( daysLeft < 10 && !opts.hoursOnly ) {
-							daysLeft = "0" + daysLeft;
-						}
-						
-						if ( hrsLeft < 10 ) {
-							hrsLeft = "0" + hrsLeft;
-						}
-						
-						if ( minsLeft < 10 ) {
-							minsLeft = "0" + minsLeft;
-						}
-						
-						if ( secLeft < 10 ) {
-							secLeft = "0" + secLeft;
-						}
-					}
-		
 					settings = {
 						originalContent : $this.html(),
 						date : opts.date,
@@ -206,82 +166,30 @@ $.fn.countdown = function( method /*, options*/ ) {
 						onResume : opts.onResume,
 						onPause : opts.onPause,
 						hasCompleted : false,
-						timer : 0							
+						timer : 0	
 					};
-					
-					//Set initial time
-					if ( opts.direction === "down" && ( now <= date || opts.minus ) ) {
-						time = template.replace( rDays, daysLeft ).replace( rHrs, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
-					} else if ( opts.direction === "up" && ( date <= now || opts.minus ) ) {
-						time = template.replace( rDays, daysLeft ).replace( rHrs, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
-					} else {
-						time = template.replace( rDate, "00");
-						settings.hasCompleted = true;
-					}
 
-					//If a countdown has completed before its even started we don"t
-					//need to set an interval
-					if( !settings.hasCompleted ) {
-						func = $.proxy( timerFunc, $this );
-						settings.timer = setInterval( func, settings.updateTime );
-					}
+					func = $.proxy( timerFunc, $this );
+					settings.timer = setInterval( func, settings.updateTime );
+
+					$this.data( "jcdData", settings );
 					
-					$this.data( "jcdData", settings ).html( time );
-					
-					//Store settings so they can be accessed later
-					if ( settings.hasCompleted ) {						
-						$this.trigger("complete.jcdevt");
-						clearInterval( settings.timer );
-					}
-					
-				});				
-			
+					func();
+				});
 			},
 			changeSettings: function( options ) {
-
 				//Like resume but with resetting/changing options
 				return this.each(function() {
 					var $this  = $(this),
 						settings,
-						template,
-						now,
-						date,
-						timeLeft,
-						eDaysLeft,
-						daysLeft,
-						eHrsLeft,
-						hrsLeft,
-						minsLeft,					
-						eMinsleft,
-						secLeft,
-						time = "",
-						func;
+						func = $.proxy( timerFunc, $this );
 						
 					if( !$this.data("jcdData") ) {
 						return true;
 					}
 					
 					settings = $.extend( {}, $this.data("jcdData"), options );						
-					template = settings.htmlTemplate;
-
-					now = ( settings.offset === null ) ? new Date() : getTZDate( settings.offset );
-					date = new Date( settings.date );						
-					timeLeft = ( settings.direction === "down" ) ? date.getTime() - now.getTime() :
-						now.getTime() - date.getTime();
-					eDaysLeft = timeLeft / msPerDay;
-					daysLeft = floor( eDaysLeft );
-					eHrsLeft = ( eDaysLeft - daysLeft ) * 24; //Gets remainder and * 24
-					hrsLeft = floor( eHrsLeft );
-					minsLeft = floor( ( eHrsLeft - hrsLeft ) * 60 );					
-					eMinsleft = ( eHrsLeft - hrsLeft ) * 60; //Gets remainder and * 60
-					secLeft = floor( ( eMinsleft - minsLeft ) * 60);
 					
-					if( settings.hoursOnly ) {
-						hrsLeft += daysLeft * 24;
-						daysLeft = 0;
-					}
-					
-					//Remove all bound events as they will be set later
 					$this.unbind(".jcdevt");
 					//Clear the timer, as it might not be needed
 					clearInterval( settings.timer );
@@ -302,89 +210,25 @@ $.fn.countdown = function( method /*, options*/ ) {
 						$this.bind("resume.jcdevt", settings.onResume );
 					}
 					
-					if ( settings.direction === "down" && ( now <= date || settings.minus ) ) {
-						time = template.replace( rDays, daysLeft ).replace( rHrs, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
-					} else if ( settings.direction === "up" && ( date <= now || settings.minus ) ) {
-						time = template.replace( rDays, daysLeft ).replace( rHrs, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
-					} else {
-						time = template.replace( rDate, "00");
-						settings.hasCompleted = true;
-					}
-
-					func = $.proxy( timerFunc, $this );
-					
 					settings.timer = setInterval( func, settings.updateTime );
-					
 					$this.data("jcdData", settings);
-					func(); //Needs to run straight away when changing settings
-					if ( settings.hasCompleted ) {
-						$this.trigger("complete.jcdevt");
-						clearInterval( settings.timer );
-					}								
+					func(); //Needs to run straight away when changing settings							
 				});
 			},
 			resume: function() {			
 				//Resumes a countdown timer
 				return this.each(function() {
 					var $this = $(this),
-						settings,
-						template,
-						func,
-						now,
-						date,
-						timeLeft,
-						eDaysLeft,
-						daysLeft,
-						eHrsLeft,
-						hrsLeft,
-						minsLeft,					
-						eMinsleft,
-						secLeft,
-						time = "";
-						
-					settings = $this.data("jcdData");
+						settings = $this.data("jcdData"),
+						func = $.proxy( timerFunc, $this );
 					
 					if( !settings ) {
 						return true;
 					}
 					
-					func = $.proxy( timerFunc, $this );
-					
-					template = settings.htmlTemplate;
-					now = ( settings.offset === null ) ? new Date() : getTZDate( settings.offset );
-					date = new Date( settings.date );						
-					timeLeft = ( settings.direction === "down" ) ? date.getTime() - now.getTime() :
-						now.getTime() - date.getTime();
-					eDaysLeft = timeLeft / msPerDay;
-					daysLeft = floor( eDaysLeft );
-					eHrsLeft = ( eDaysLeft - daysLeft ) * 24;
-					hrsLeft = floor( eHrsLeft );
-					minsLeft = floor( ( eHrsLeft - hrsLeft ) * 60 );					
-					eMinsleft = ( eHrsLeft - hrsLeft ) * 60;
-					secLeft = floor( ( eMinsleft - minsLeft ) * 60 );
-
-					if( settings.hoursOnly ) {
-						hrsLeft += daysLeft * 24;
-						daysLeft = 0;
-					}
-					
-					if ( settings.direction === "down" && ( now <= date || settings.minus ) ) {
-						time = template.replace( rDays, daysLeft ).replace( rHrs, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
-					} else if ( settings.direction === "up" && ( date <= now || settings.minus ) ) {
-						time = template.replace( rDays, daysLeft ).replace( rHrs, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
-					} else {
-						time = template.replace( rDate, "00" );
-						settings.hasCompleted = true;
-					}
-					
 					settings.timer = setInterval( func, settings.updateTime );
-					
-					$this.data("jcdData", settings).trigger("resume.jcdevt").html( time ).trigger("change.jcdevt");
-					
-					if ( settings.hasCompleted ) {
-						$this.trigger("complete.jcdevt");
-						clearInterval( settings.timer );
-					}	
+					$this.data("jcdData", settings).trigger("resume.jcdevt")
+					func();
 				});
 			},
 			pause: function() {	
@@ -399,8 +243,7 @@ $.fn.countdown = function( method /*, options*/ ) {
 					//Clear interval (Will be started on resume)
 					clearInterval( settings.timer );
 					//Trigger pause event handler
-					$this.trigger("pause.jcdevt");	
-					
+					$this.data("jcdData", settings).trigger("pause.jcdevt");					
 				});
 			},
 			complete: function() {
@@ -422,9 +265,7 @@ $.fn.countdown = function( method /*, options*/ ) {
 			destroy: function() {				
 				return this.each(function() {
 					var $this = $(this),
-						settings;
-											
-					settings = $this.data("jcdData");
+						settings = $this.data("jcdData");
 					
 					if( !settings ) {
 						return true;
@@ -435,11 +276,9 @@ $.fn.countdown = function( method /*, options*/ ) {
 					$this.unbind(".jcdevt").removeData("jcdData").html( settings.originalContent );
 				});
 			},
-			getSettings: function( name ) {	
+			getSettings: function( name ) {
 				var $this = $(this),
-					settings;
-									
-				settings = $this.data("jcdData");
+					settings = $this.data("jcdData");
 				
 				if( !settings ) {
 					return undefined;
@@ -447,7 +286,7 @@ $.fn.countdown = function( method /*, options*/ ) {
 				//If an individual setting is required
 				if( name ) {
 					//If it exists, return it
-					if( settings.hasOwnProperty( name ) ) {	
+					if( settings.hasOwnProperty( name ) ) {
 						return settings[name];
 					}
 					return undefined;
@@ -465,5 +304,5 @@ $.fn.countdown = function( method /*, options*/ ) {
 		$.error("Method "+ method +" does not exist in the jCountdown Plugin");
 	}
 };
-       
+
 })(jQuery);
