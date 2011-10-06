@@ -1,0 +1,59 @@
+#muscle {
+	
+	width: 200px;
+	height: 20px;
+	border: 1px solid #CCCCCC;
+	margin:10px 0;
+	position: relative;
+}
+
+#muscle p {
+	position:absolute;
+	text-align:center;
+	margin: 0;
+	width:100%;
+}
+
+#muscle > div {
+	height: 20px;
+}
+#muscle.veryweak {
+	border: 1px solid #F04040;
+}
+
+#muscle.veryweak > div {
+	background-color: #FFA0A0;
+	/*width: 25%;*/
+	width: 0;
+}
+
+#muscle.weak {
+	border: 1px solid #FF853C;
+}
+
+#muscle.weak > div {
+	background-color: #FFB78C;
+	/*width: 45%;*/
+	width: 0;
+}
+
+#muscle.medium {
+	border: 1px solid #FFCC00;
+	
+}
+
+#muscle.medium > div {
+	background-color: #FFEC8B;
+	/*width: 75%;*/
+	width: 0;
+}
+
+#muscle.strong {
+	border: 1px solid #8DFF1C;
+}
+
+#muscle.strong > div {
+	background-color: #C3FF88;
+	/*width: 100%;*/
+	width: 0;
+}
