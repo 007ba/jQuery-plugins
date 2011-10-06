@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<title>jQuery Text Selection Plugin</title>
+<script src="script/jquery-1.6.2.js" type="text/javascript"></script>
+<script src="script/jquery.caret-1.0.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	
+		$("#txt").keydown(function(){
+			//$("span.caretStart").text($(this).caret().start );
+			//$("span.caretEnd").text($(this).caret().end);
+		}).keypress(function(){
+			//$("span.caretStart").text($(this).caret().start );
+			//$("span.caretEnd").text($(this).caret().end);
+		}).mousemove(function(){
+			$("span.caretStart").text($(this).caret().start );
+			$("span.caretEnd").text($(this).caret().end );
+		});
+
+		$("#btn").click(function() {
+			var caret;
+			
+			$("#txt").caret('wow');
+			//$("#txt").caret(/wow/i);
+			
+			caret = $("#txt").caret();
+					
+			$("span.caretStart").text( caret.start );
+			$("span.caretEnd").text( caret.end );
+		});
+		
+		$("#btn2").click(function() {
+			$("#txt").caret(0,0);	
+			var caret = $("#txt").caret();
+					
+			$("span.caretStart").text( caret.start );
+			$("span.caretEnd").text( caret.end );
+		});
+});
+</script>
+</head>
+<body>
+	<div id="container">
+	<h1>jQuery Text Selection Plugin</h1><br />
+	
+		<button id="btn">Click me to select 'wow'</button>
+		<button id="btn2">Click me to reset caret to beginning</button>
+		
+		<textarea id="txt">im text wow</textarea>
+		<span class="caretStart"></span>
+		<span class="caretEnd"></span>
+	</div>
+</body>
+</html>
