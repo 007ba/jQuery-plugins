@@ -60,6 +60,21 @@
 	destroy - Removes timer and unbinds any events, puts the DOM Element back to its original HTML state
 	    Example: $("#time").countdown("destroy");
 	
+	
+	Settings you can access in onChange event through settings object:
+
+	daysLeft
+	hrsLeft
+	minsLeft
+	secLeft
+	timer (id for Interval)
+	offset
+	updateTime
+	hoursOnly (boolean)
+	date
+	minus (boolean)
+	htmlTemplate
+	
 ## Usage
 ```javascript
 
