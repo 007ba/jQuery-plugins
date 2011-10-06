@@ -20,7 +20,7 @@ test("Basic", 2, function() {
 
 
 
-test("Advanced", 17, function() {
+test("Advanced", 16, function() {
 	
 	var newSettings,
 		settings,
