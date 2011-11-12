@@ -1,5 +1,5 @@
 /* 
-* jCountdown 1.3.2 jQuery Plugin
+* jCountdown 1.3.3 jQuery Plugin
 * Copyright 2011 Tom Ellis http://www.webmuse.co.uk | MIT Licensed (license.txt)
 */
 (function($) {
@@ -17,6 +17,7 @@ $.fn.countdown = function( method /*, options*/ ) {
 			onPause: null,
 			leadingZero: false,
 			offset: null,
+			servertime:null,
 			hoursOnly: false,
 			direction: "down"
 		},
@@ -29,15 +30,20 @@ $.fn.countdown = function( method /*, options*/ ) {
 		rHrs = /%\{h\}/,
 		rMins = /%\{m\}/,
 		rSecs = /%\{s\}/,
-		getTZDate = function( offset ) {					
-			//Returns a new date based on an offset (set in options as "offset")
-			//Useful when you want to match a server time, not a local PC time
-			var hrs = (offset || 0) * msPerHr,
-				tmpDate = new Date(),
-				curHrs = tmpDate.getTime() - ( ( -tmpDate.getTimezoneOffset() / 60 ) * msPerHr ),
-				dateMS = tmpDate.setTime( curHrs + hrs );
-
-			tmpDate = null;
+		getTZDate = function( offset, difference ) {					
+			
+			var hrs,
+				dateMS,
+				extra,
+				tmpDate = new Date();
+			
+			if( offset === null ) {
+				dateMS = tmpDate.getTime() - difference;
+			} else {				
+				hrs = offset * msPerHr;
+				curHrs = tmpDate.getTime() - ( ( -tmpDate.getTimezoneOffset() / 60 ) * msPerHr ) + hrs,
+				dateMS = tmpDate.setTime( curHrs );
+			}
 			return new Date( dateMS );
 		},			
 		timerFunc = function() {
@@ -63,17 +69,29 @@ $.fn.countdown = function( method /*, options*/ ) {
 			
 			template = settings.htmlTemplate;
 			
-			now = ( settings.offset === null ) ? new Date() : getTZDate( settings.offset );
-			date = new Date( settings.date );
+			if( settings.offset === null && settings.servertime === null ) {
+				now = new Date();
+			} else 	if( settings.offset !== null ) {
+				now = getTZDate( settings.offset );
+			} else {
+				now =  getTZDate( null, settings.difference ); //Date now
+			}
+			
+			
+			date = new Date( settings.date ); //Date to countdown to
 			
 			timeLeft = ( settings.direction === "down" ) ? date.getTime() - now.getTime() : now.getTime() - date.getTime();	
+						
 			eDaysLeft = timeLeft / msPerDay;
 			daysLeft = floor( eDaysLeft );
 			eHrsLeft = ( eDaysLeft - daysLeft ) * 24;
 			hrsLeft = floor( eHrsLeft );
 			minsLeft = floor( ( eHrsLeft - hrsLeft ) * 60 );				
 			eMinsleft = ( eHrsLeft - hrsLeft ) * 60;
-			secLeft = floor( (eMinsleft - minsLeft ) * 60 );
+			//secLeft = floor( (eMinsleft - minsLeft ) * 60 );
+			secLeft = Math.round( (eMinsleft - minsLeft ) * 60 );
+			
+
 			
 			if( settings.hoursOnly ) {
 				hrsLeft += daysLeft * 24;
@@ -84,6 +102,10 @@ $.fn.countdown = function( method /*, options*/ ) {
 			settings.hrsLeft = hrsLeft;
 			settings.minsLeft = minsLeft;
 			settings.secLeft = secLeft;
+			
+			if( secLeft == 60 ) { 
+				secLeft = 0;
+			}
 			
 			if ( settings.leadingZero ) {			
 				if ( daysLeft < 10 && !settings.hoursOnly ) {
@@ -161,6 +183,8 @@ $.fn.countdown = function( method /*, options*/ ) {
 						htmlTemplate : opts.htmlTemplate,
 						minus : opts.minus,
 						offset : opts.offset,
+						servertime: opts.servertime,
+						difference: null,
 						onChange : opts.onChange,
 						onComplete : opts.onComplete,
 						onResume : opts.onResume,
@@ -168,6 +192,14 @@ $.fn.countdown = function( method /*, options*/ ) {
 						hasCompleted : false,
 						timer : 0	
 					};
+					
+					if( opts.servertime !== null ) {
+						var local = new Date(),
+							difference = local.getTime() - settings.servertime;
+							difference = Number(difference);
+
+						settings.difference = difference;
+					}
 
 					func = $.proxy( timerFunc, $this );
 					settings.timer = setInterval( func, settings.updateTime );
