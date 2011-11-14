@@ -35,7 +35,7 @@
 	         int or float (Offset in hours, can be used for setting countdown time to match server time)
 	
 	servertime - Default: null
-			 int (servertime in milliseconds, e.g (time() + 1000) in PHP. Used to match countdown across devices where local time can be different.
+			 int (servertime in milliseconds, e.g (time() * 1000) in PHP. Used to match countdown across devices where local time can be different.
 		
 	direction - Default: "down"
 	            Countdown Direction, "down" for down to a date, and up for "up" from a date
