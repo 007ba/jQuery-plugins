@@ -49,7 +49,7 @@
 	            (Boolean. If set to true, jCountdown counts down the years/months as well)
 			
 			
-	## Methods
+## Methods
 
 	changeSettings - Accepts an object map, the same as when first initialising the plugin
 	    Example: $("#time").countdown("changeSettings", options);
