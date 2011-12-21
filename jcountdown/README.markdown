@@ -86,7 +86,9 @@
 	minus (boolean)
 	htmlTemplate
 
+
 ## Usage
+
 ```javascript
 
 //Simple
