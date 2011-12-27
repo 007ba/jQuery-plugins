@@ -1,41 +1,13 @@
 
-Version 1.3.1:
+Version 1.4:
 
-- Some logic improved, meaning shorter code
-- Removed unnecessary indenting
-- Added new option, hoursOnly (boolean). Numbers of days left gets converted to hours and added to the number of hours left in the countdown
-- Renamed function getTimeZoneDate to getTZDate
-- Data name renamed from jcdSettings to jcdData
-- Event namespace renamed from jcountdown to jcdevt
-- Fixed bug: When changing settings of an existing countdown, time left doesn't update until next interval, when it should be straight away
-- Fixed bug: When calling .countdown on an element that already has a countdown, another one gets added. Now it changes the settings.
-- Fixed bug: When retrieving a boolean setting that is false, returns undefined instead.
-- Fixed bug: Interval should be cleared when countdown destroyed.
 
-Version 1.3:
+- On and Off event API now used from jQuery 1.7
+- Years and months now supported in countdown
+- Added yearsAndMonths option
+- htmlTemplate changed to accommodate years and months being added, and tokens have changed
+- originalContent renamed to originalHTML
+- servertime options can now be a function as well as a number
+- fixed bug: https://github.com/tomgrohl/jQuery-plugins/issues/7
+- fixed bug: https://github.com/tomgrohl/jQuery-plugins/issues/9
 
-- Added new support for methods:
-changeSettings
-getSettings
-resume
-pause
-complete
-destroy
-
-- Added support for Timezones via hour offset
-
-- Added Count direction
-down
-up
-
-Version 1.2:
-
-- Fixed bugs
-- Improved Login
-- Added Events:
-onChange
-onComplete
-
-Version 1:
-
-- First Version of Plugin
