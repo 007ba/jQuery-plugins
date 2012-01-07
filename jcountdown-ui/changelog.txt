@@ -1,0 +1,4 @@
+Version 1:
+
+- First Version of Plugin
+- Passes JSHint
