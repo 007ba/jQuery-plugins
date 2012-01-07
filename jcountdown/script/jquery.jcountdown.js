@@ -1,6 +1,6 @@
 /* 
-* jCountdown 1.4 jQuery Plugin
-* Copyright 2011 Tom Ellis http://www.webmuse.co.uk | MIT Licensed (license.txt)
+* jCountdown 1.4.1 jQuery Plugin
+* Copyright 2012 Tom Ellis http://www.webmuse.co.uk | MIT Licensed (license.txt)
 */
 (function($) {
 $.fn.countdown = function( method /*, options*/ ) {
@@ -18,6 +18,8 @@ $.fn.countdown = function( method /*, options*/ ) {
 			offset: null,
 			servertime:null,
 			hoursOnly: false,
+			minsOnly: false,
+			secsOnly: false,
 			hours: false,
 			yearsAndMonths: false,
 			direction: "down"
@@ -25,6 +27,7 @@ $.fn.countdown = function( method /*, options*/ ) {
 		slice = [].slice,
 		clear = window.clearInterval,
 		floor = Math.floor,
+		ceil = Math.ceil,
 		msPerHr = 36E5,
 		msPerDay = 864E5,
 		rDate = /(%y|%m|%d|%h|%i|%s)/g,
@@ -39,13 +42,14 @@ $.fn.countdown = function( method /*, options*/ ) {
 			var hrs,
 				dateMS,
 				extra,
+				curHrs,
 				tmpDate = new Date();
 			
 			if( offset === null ) {
 				dateMS = tmpDate.getTime() - difference;
 			} else {				
 				hrs = offset * msPerHr;
-				curHrs = tmpDate.getTime() - ( ( -tmpDate.getTimezoneOffset() / 60 ) * msPerHr ) + hrs,
+				curHrs = tmpDate.getTime() - ( ( -tmpDate.getTimezoneOffset() / 60 ) * msPerHr ) + hrs;
 				dateMS = tmpDate.setTime( curHrs );
 			}
 			return new Date( dateMS );
@@ -78,7 +82,7 @@ $.fn.countdown = function( method /*, options*/ ) {
 			
 			if( settings.offset === null && settings.servertime === null ) {
 				now = new Date();
-			} else 	if( settings.offset !== null ) {
+			} else if( settings.offset !== null ) {
 				now = getTZDate( settings.offset );
 			} else {
 				now =  getTZDate( null, settings.difference ); //Date now
@@ -88,37 +92,62 @@ $.fn.countdown = function( method /*, options*/ ) {
 			
 			timeLeft = ( settings.direction === "down" ) ? date.getTime() - now.getTime() : now.getTime() - date.getTime();	
 			
-			diff = Math.floor( timeLeft / 1000 );
+			//Was: diff = floor( timeLeft / 1000 ); wasn't accurate enough
+			diff = Math.round( timeLeft / 1000 );
 			
 			secLeft = diff % 60;
-			diff = Math.floor( diff / 60 );
+			diff = floor( diff / 60 );
 			minsLeft = diff % 60;
-			diff = Math.floor( diff / 60 );
+			diff = floor( diff / 60 );
 			hrsLeft = diff % 24;
 			
-			diff = Math.floor( diff / 24 );
+			diff = floor( diff / 24 );
 			daysLeft = diff;
 						
 			if( settings.yearsAndMonths ) {
-				yearsLeft = Math.floor( diff / 365 );
-				diff = Math.floor( diff % 365 );
-				monthsLeft = Math.floor( diff / 30 );
-				daysLeft = Math.ceil( diff % 30 ); // Remainder of months left
+				yearsLeft = floor( diff / 365 );
+				diff = floor( diff % 365 );
+				monthsLeft = floor( diff / 30 );
+				if( monthsLeft === 12 ) {
+					yearsLeft = 1;
+					monthsLeft = 0;
+					diff = 12;
+				}
+				daysLeft = ceil( diff % 30 ); // Remainder of months left
 			}
 
+			//Assumes you are using dates within a month 
+			//as years and months aren't taken into account
 			if( settings.hoursOnly ) {
 				hrsLeft += daysLeft * 24;
 				daysLeft = 0;
 			}
 			
-			settings.yearsLeft = yearsLeft,
-			settings.monthsLeft = monthsLeft,
+			//Assumes you are only using dates in the near future 
+			//as years and months aren't taken into account
+			if( settings.minsOnly ) {
+				minsLeft += ( hrsLeft * 60 ) + ( ( daysLeft * 24 ) * 60 );
+				daysLeft = 0;
+				hrsLeft = 0;
+			}
+
+			//Assumes you are only using dates in the near future 
+			//as years, months and days aren't taken into account
+			if( settings.secsOnly ) {
+				secLeft += ( minsLeft * 60 );
+				daysLeft = 0;
+				hrsLeft = 0;
+				minsLeft = 0;
+			}
+									
+			settings.yearsLeft = yearsLeft;
+			settings.monthsLeft = monthsLeft;
 			settings.daysLeft = daysLeft;
 			settings.hrsLeft = hrsLeft;
 			settings.minsLeft = minsLeft;
 			settings.secLeft = secLeft;
 			
-			if( secLeft == 60 ) { 
+			if( secLeft === 60 ) { 
 				secLeft = 0;
 			}
 			
@@ -146,10 +175,9 @@ $.fn.countdown = function( method /*, options*/ ) {
 				}
 			}
 
-			if ( ( settings.direction === "down" && ( now <= date || settings.minus ) ) 
-				|| ( settings.direction === "up" && ( date <= now || settings.minus )  ) ) {
+			if ( ( settings.direction === "down" && ( now < date || settings.minus ) ) || ( settings.direction === "up" && ( date < now || settings.minus )  ) ) {
 				time = template.replace( rYears, yearsLeft ).replace( rMonths, monthsLeft );
-				time = time.replace( rDays, daysLeft ).replace( rHrs, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );				
+				time = time.replace( rDays, daysLeft ).replace( rHrs, hrsLeft ).replace( rMins, minsLeft ).replace( rSecs, secLeft );
 			} else {
 				time = template.replace( rDate, "00");
 				settings.hasCompleted = true;
@@ -167,7 +195,8 @@ $.fn.countdown = function( method /*, options*/ ) {
 				
 				var opts = $.extend( {}, defaults, options ),
 					template = opts.htmlTemplate,
-					local;
+					local,
+					testDate;
 				
 				return this.each(function() {
 					var $this = $(this),
@@ -181,8 +210,17 @@ $.fn.countdown = function( method /*, options*/ ) {
 					}
 					
 					if( opts.date === null ) {
+						$.error("No Date passed to jCountdown. date option is required.");
 						return true;
 					}
+					
+					testDate = new Date(opts.date);
+					
+					if( testDate.toString() === "Invalid Date" ) {
+						$.error("Invalid Date passed to jCountdown: " + opts.date);
+					}
+					
+					testDate = null;
 					
 					//Add event handlers where set
 					if( opts.onChange ) {
@@ -206,6 +244,8 @@ $.fn.countdown = function( method /*, options*/ ) {
 						date : opts.date,
 						yearsAndMonths: opts.yearsAndMonths,
 						hoursOnly : opts.hoursOnly,
+						minsOnly : opts.minsOnly,
+						secsOnly : opts.secsOnly,
 						leadingZero : opts.leadingZero,
 						updateTime : opts.updateTime,
 						direction : opts.direction,
@@ -224,8 +264,8 @@ $.fn.countdown = function( method /*, options*/ ) {
 					};
 					
 					if( opts.servertime !== null ) {
-						local = new Date();
 						var tempTime;
+						local = new Date();
 						
 						tempTime = ( $.isFunction( settings.servertime ) ) ? settings.servertime() : settings.servertime;
 						settings.difference = local.getTime() - tempTime;
@@ -244,6 +284,7 @@ $.fn.countdown = function( method /*, options*/ ) {
 				return this.each(function() {
 					var $this  = $(this),
 						settings,
+						testDate,
 						func = $.proxy( timerFunc, $this );
 						
 					if( !$this.data("jcdData") ) {
@@ -251,6 +292,14 @@ $.fn.countdown = function( method /*, options*/ ) {
 					}
 					
 					settings = $.extend( {}, $this.data("jcdData"), options );
+
+					if( options.hasOwnProperty("date") ) {
+						testDate = new Date(options.date);
+						
+						if( testDate.toString() === "Invalid Date" ) {
+							$.error("Invalid Date passed to jCountdown: " + options.date);
+						}
+					}
 					
 					settings.completed = false;
 					//Clear the timer, as it might not be needed
