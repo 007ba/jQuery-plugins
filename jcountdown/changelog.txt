@@ -1,4 +1,12 @@
 
+Version 1.4.1:
+
+- Fixed bug "onComplete too late?": https://github.com/tomgrohl/jQuery-plugins/issues/13
+- Fixed bug "Years countdown is incorrect": https://github.com/tomgrohl/jQuery-plugins/issues/14
+- Added minsOnly and secsOnly options
+- Now passes JSHint
+- Add error checking for invalid dates passed to jCountdown
+
 Version 1.4:
 
 
@@ -8,6 +16,6 @@ Version 1.4:
 - htmlTemplate changed to accommodate years and months being added, and tokens have changed
 - originalContent renamed to originalHTML
 - servertime options can now be a function as well as a number
-- fixed bug: https://github.com/tomgrohl/jQuery-plugins/issues/7
-- fixed bug: https://github.com/tomgrohl/jQuery-plugins/issues/9
+- Fixed bug: https://github.com/tomgrohl/jQuery-plugins/issues/7
+- Fixed bug: https://github.com/tomgrohl/jQuery-plugins/issues/9
 
