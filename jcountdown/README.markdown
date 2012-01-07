@@ -1,9 +1,11 @@
 # jCountdown - jQuery Countdown Plugin
 
 
-##Version 1.4
+##Version 1.4+
 
 1.4 is a major rewrite of the API meaning how you would use it has slightly changed. Please see the changelog for more information.
+
+## Options
 
 	date - Default: null
 	       (Must be a valid date string or Date object)
@@ -44,6 +46,12 @@
 
 	hoursOnly - Default: false
 	            (Boolean. If set to true, jCountdown ignores days left and add converts to hours and adds this to the hours left)
+				
+	minsOnly - Default: false (New in 1.4.1)
+				(Boolean. If set to true, jCountdown ignores days/hours and add converts to minutes and adds this to the minutes left)
+				
+	secsOnly - Default: false (New in 1.4.1)
+	            (Boolean. If set to true, jCountdown ignores days/hours/minutes left and converts to seconds and adds this to seconds left)
 
 	yearsAndMonths - Default: false
 	            (Boolean. If set to true, jCountdown counts down the years/months as well)
@@ -262,4 +270,4 @@ $(document.ready(function(){
 
 This plugin is licensed under the MIT License (LICENSE.txt).
 
-Copyright (c) 2011 [Tom Ellis](http://www.webmuse.co.uk)
+Copyright (c) 2012 [Tom Ellis](http://www.webmuse.co.uk)
