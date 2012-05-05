@@ -1,4 +1,4 @@
-# jCookie - jQuery Cookie Plugin
+# jCookie - jQuery Cookie Plugin v1.1.1
 
 
 ## Options
@@ -53,4 +53,4 @@ $(document).ready(function(){
 
 This plugin is licensed under the MIT License (LICENSE.txt).
 
-Copyright (c) 2011 [Tom Ellis](http://www.webmuse.co.uk)
+Copyright (c) 2012 [Tom Ellis](http://www.webmuse.co.uk)
