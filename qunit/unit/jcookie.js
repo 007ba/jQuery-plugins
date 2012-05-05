@@ -24,9 +24,9 @@ test("Basic", 3, function() {
 test("Advanced", 3, function() {
 
 	var options = {
-		"path" : "/",
+		"path" : "/plugins/qunit",
 		"expires" : 1,
-		"domain" : "localhost"
+		"domain" : false //on localhost
 	};
 
 	$.cookie('mycookie2', 'value', options);
@@ -40,7 +40,7 @@ test("Advanced", 3, function() {
 	
 	
 
-	$.cookie('mycookie2', null);
+	$.cookie('mycookie2', null, options);
 		
 	equals( $.cookie('mycookie2'), undefined, "Cookie Value is Successfully Deleted" );	
 
