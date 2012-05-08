@@ -1,5 +1,5 @@
 /* 
-* jCountdown 1.4.1 jQuery Plugin
+* jCountdown 1.4.2 jQuery Plugin
 * Copyright 2012 Tom Ellis http://www.webmuse.co.uk | MIT Licensed (license.txt)
 */
 (function($) {
@@ -109,7 +109,12 @@ $.fn.countdown = function( method /*, options*/ ) {
 				diff = floor( diff % 365 );
 				monthsLeft = floor( diff / 30 );
 				if( monthsLeft === 12 ) {
-					yearsLeft = 1;
+					
+					if( settings.direction === "down" ) {
+						yearsLeft = 1;
+					} else {
+						yearsLeft += 1;	
+					}
 					monthsLeft = 0;
 					diff = 12;
 				}
