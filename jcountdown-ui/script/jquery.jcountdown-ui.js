@@ -1,7 +1,6 @@
 /* 
-* jCountdown UI 1.0 jQuery UI Widget
-* Copyright 2012 Tom Ellis http://www.webmuse.co.uk
-* MIT Licensed (license.txt)
+* jCountdown UI 1.0.1 jQuery UI Widget
+* Copyright 2012 Tom Ellis http://www.webmuse.co.uk | MIT Licensed (license.txt)
 */
 (function($) {
 
@@ -240,7 +239,12 @@ $.widget("jui.countdownui", {
 			diff = floor( diff % 365 );
 			monthsLeft = floor( diff / 30 );
 			if( monthsLeft === 12 ) {
-				yearsLeft = 1;
+				
+				if( settings.direction === "down" ) {
+					yearsLeft = 1;
+				} else {
+					yearsLeft += 1;	
+				}
 				monthsLeft = 0;
 				diff = 12;
 			}
