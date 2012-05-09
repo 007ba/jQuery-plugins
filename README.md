@@ -1,6 +1,6 @@
 # jQuery Plugins
 
-A collection of small plugins that work with jQuery 1.4.3+.
+A collection of small plugins that work with jQuery 1.7+.
 
 Current Plugins:
 
@@ -13,4 +13,4 @@ Current Plugins:
 
 These plugins are licensed under the MIT License (LICENSE.txt).
 
-Copyright (c) 2011 [Tom Ellis](http://www.webmuse.co.uk/)
+Copyright (c) 2012 [Tom Ellis](http://www.webmuse.co.uk/)
