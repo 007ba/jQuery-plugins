@@ -37,8 +37,7 @@ $.fn.countdown = function( method /*, options*/ ) {
 		rHrs = /%h/,
 		rMins = /%i/,
 		rSecs = /%s/,
-		getTZDate = function( offset, difference ) {					
-			
+		getTZDate = function( offset, difference ) {		
 			var hrs,
 				dateMS,
 				extra,
@@ -72,6 +71,22 @@ $.fn.countdown = function( method /*, options*/ ) {
 				secLeft,
 				time = "",
 				diff,
+				timeSections = {
+					"years" : 0,
+					"months" : 0,
+					"days" : 0,
+					"hours" : 0,
+					"minutes" : 0,
+					"seconds" : 0
+				},
+				extractSection = function( numSecs ) {
+					var amount;
+	
+					amount = floor( diff / numSecs );
+					diff -= amount * numSecs;
+					
+					return amount;
+				},
 				settings = $this.data("jcdData");
 				
 			if( !settings ) {
@@ -85,41 +100,41 @@ $.fn.countdown = function( method /*, options*/ ) {
 			} else if( settings.offset !== null ) {
 				now = getTZDate( settings.offset );
 			} else {
-				now =  getTZDate( null, settings.difference ); //Date now
+				now = getTZDate( null, settings.difference ); //Date now
 			}
+			
+			now.setMilliseconds(0);
 			
 			date = new Date( settings.date ); //Date to countdown to
 			
-			timeLeft = ( settings.direction === "down" ) ? date.getTime() - now.getTime() : now.getTime() - date.getTime();	
+			date.setMilliseconds(0);
 			
-			//Was: diff = floor( timeLeft / 1000 ); wasn't accurate enough
+			timeLeft = ( settings.direction === "down" ) ? date.getTime() - now.getTime() : now.getTime() - date.getTime();
+			
 			diff = Math.round( timeLeft / 1000 );
 			
-			secLeft = diff % 60;
-			diff = floor( diff / 60 );
-			minsLeft = diff % 60;
-			diff = floor( diff / 60 );
-			hrsLeft = diff % 24;
-			
-			diff = floor( diff / 24 );
-			daysLeft = diff;
+			timeSections.days = extractSection( 86400 );			
+			timeSections.hours = extractSection( 3600 );			
+			timeSections.minutes = extractSection( 60 );
+			timeSections.seconds = extractSection( 1 );
 						
 			if( settings.yearsAndMonths ) {
-				yearsLeft = floor( diff / 365 );
-				diff = floor( diff % 365 );
-				monthsLeft = floor( diff / 30 );
-				if( monthsLeft === 12 ) {
-					
-					if( settings.direction === "down" ) {
-						yearsLeft = 1;
-					} else {
-						yearsLeft += 1;	
-					}
-					monthsLeft = 0;
-					diff = 12;
-				}
-				daysLeft = ceil( diff % 30 ); // Remainder of months left
+
+				//Add days back on so we can calculate years easier
+				diff += ( timeSections.days * 86400 );
+				
+				timeSections.years = extractSection( 31556926 );				
+				timeSections.months = extractSection( 2629743.83 );				
+				timeSections.days = extractSection( 86400 );
 			}
+			
+			yearsLeft = timeSections.years;
+			monthsLeft = timeSections.months;
+			daysLeft = timeSections.days;
+			
+			hrsLeft = timeSections.hours;
+			minsLeft = timeSections.minutes;
+			secLeft = timeSections.seconds;
 
 			//Assumes you are using dates within a month 
 			//as years and months aren't taken into account
@@ -132,17 +147,14 @@ $.fn.countdown = function( method /*, options*/ ) {
 			//as years and months aren't taken into account
 			if( settings.minsOnly ) {
 				minsLeft += ( hrsLeft * 60 ) + ( ( daysLeft * 24 ) * 60 );
-				daysLeft = 0;
-				hrsLeft = 0;
+				daysLeft = hrsLeft = 0;
 			}
 
 			//Assumes you are only using dates in the near future 
 			//as years, months and days aren't taken into account
 			if( settings.secsOnly ) {
 				secLeft += ( minsLeft * 60 );
-				daysLeft = 0;
-				hrsLeft = 0;
-				minsLeft = 0;
+				daysLeft = hrsLeft = minsLeft = 0;
 			}
 									
 			settings.yearsLeft = yearsLeft;
@@ -157,10 +169,11 @@ $.fn.countdown = function( method /*, options*/ ) {
 			}
 			
 			if ( settings.leadingZero ) {			
+				
 				if ( daysLeft < 10 && !settings.hoursOnly ) {
 					daysLeft = "0" + daysLeft;
 				}
-
+				
 				if ( yearsLeft < 10 ) {
 					yearsLeft = "0" + yearsLeft;
 				}
