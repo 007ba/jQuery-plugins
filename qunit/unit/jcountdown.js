@@ -147,11 +147,13 @@ asyncTest("Advanced Options - hoursOnly", 1, function() {
 });
 
 	
-asyncTest("Advanced Options - yearsAndMonths", 2, function() {
+asyncTest("Advanced Options - yearsAndMonths: Future Date", 2, function() {
 	
 	temp = new Date();
 	//1 hour * 24 hours * 364 days * 2 years + 32 days
-	future60Date = new Date( temp.getTime() + ( 3600 * 24  * 364000 * 2 + ( 3600 * 24  * 32000 ) ) );
+	future60Date = new Date( temp.getTime() + ( ( 86400 * 365000 * 2 ) + ( 86400 * 32000 ) ) );
+	
+	//console.log( future60Date );
 	
 	$("#test").countdown({
 		date: future60Date,
@@ -165,3 +167,53 @@ asyncTest("Advanced Options - yearsAndMonths", 2, function() {
 	});
 		
 });
+
+asyncTest("Advanced Options - yearsAndMonths : Past Date", 2, function() {
+	
+	temp = new Date();
+	pastDate = new Date( temp.getTime() - ( 2629743.83 * 11000 ) ); //11 months ago
+	
+	//pastDate.setTime( 126192080000 );
+	//126192080000
+	
+	//console.log( future60Date );
+	
+	$("#test").countdown({
+		date: pastDate,
+		direction: "up",
+		yearsAndMonths: true,
+		onChange: function( e,settings ) {
+			equals( settings.yearsLeft, 0, "Returns correct number of years when yearsAndMonths option is used" );
+			equals( settings.monthsLeft, 10, "Returns correct number of months when yearsAndMonths option is used" );
+			$("#test").countdown('destroy');
+			start();
+		}
+	});
+		
+});
+
+/*
+asyncTest("Advanced Options - yearsAndMonths : Past Date", 2, function() {
+	
+	temp = new Date();
+	pastDate = new Date( temp.getTime() - ( 2629743.83 * 11000 ) ); //11 months ago
+	
+	//pastDate.setTime( 126192080000 );
+	//126192080000
+	
+	//console.log( future60Date );
+	
+	$("#test").countdown({
+		date: pastDate,
+		direction: "up",
+		yearsAndMonths: true,
+		onChange: function( e,settings ) {
+			equals( settings.yearsLeft, 0, "Returns correct number of years when yearsAndMonths option is used" );
+			equals( settings.monthsLeft, 10, "Returns correct number of months when yearsAndMonths option is used" );
+			$("#test").countdown('destroy');
+			start();
+		}
+	});
+		
+});
+*/
