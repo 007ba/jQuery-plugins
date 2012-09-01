@@ -53,8 +53,14 @@
 	secsOnly - Default: false (New in 1.4.1)
 	            (Boolean. If set to true, jCountdown ignores days/hours/minutes left and converts to seconds and adds this to seconds left)
 
+	weeks - Default: false (New in 1.4.2)
+	            (Boolean. When set to true, after months left are calculated, weeks left will be calculated.)
+				
 	yearsAndMonths - Default: false
 	            (Boolean. If set to true, jCountdown counts down the years/months as well)
+
+	stopwatch - Default: false (New in 1.4.2)
+	            (Boolean. When set to true, when has countdown is resumed from being paused, it carries on from the date it paused at, not the date it resumes from.)
 			
 			
 ## Methods
@@ -94,6 +100,15 @@
 	minus (boolean)
 	htmlTemplate
 
+### Events - new in 1.4.2
+
+You can bind these using .on and .off()
+
+	- countChange
+	- countComplete
+	- countPause
+	- countResume
+	
 
 ## Usage
 
