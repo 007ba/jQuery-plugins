@@ -1,5 +1,5 @@
 /* 
-* jCountdown 1.4.2 jQuery Plugin
+* jCountdown 1.4.3 jQuery Plugin
 * Copyright 2012 Tom Ellis http://www.webmuse.co.uk | MIT Licensed (license.txt)
 */
 (function($) {
@@ -324,7 +324,7 @@ $.fn.countdown = function( method /*, options*/ ) {
 						}
 					}
 					
-					settings.completed = false;
+					settings.hasCompleted = false;
 					settings.dateObj  = new Date( options.date );
 					
 					//Clear the timer, as it might not be needed
