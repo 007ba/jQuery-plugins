@@ -2,7 +2,7 @@
 
 A collection of small plugins that work with jQuery 1.7+.
 
-PLEASE NOTE: jCountdown - jQuery Countdown Plugin (Moved to https://github.com/tomgrohl/jCountdown)
+**PLEASE NOTE: jCountdown - jQuery Countdown Plugin (Moved to https://github.com/tomgrohl/jCountdown)**
 
 Current Plugins:
 
